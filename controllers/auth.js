@@ -1,7 +1,7 @@
 'use strict'
 var monk = require('monk');
 var wrap = require('co-monk');
-var db = monk('localhost/testNotify');
+var db = monk('localhost/testCarpool');
 var co = require('co');
 var bcrypt = require('co-bcrypt');
 var jwt = require('jsonwebtoken');

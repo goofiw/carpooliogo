@@ -31,7 +31,7 @@ app.use(views('views', {
   default: 'html'
 }));
 
-app.use(serve(__dirname + '/src'));
+app.use(serve(__dirname + '/dist'));
 
 app.use(logger());
 

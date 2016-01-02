@@ -28,7 +28,7 @@ var router = require('koa-router')();
     yield this.body = {url: upload.getUrl()};
   }),
 
-  router.get('/', function *(next) {
+  router.get('*', function *(next) {
     yield this.render('index'); 
   }),
 
