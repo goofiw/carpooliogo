@@ -14,8 +14,16 @@ var _clone = function(item) {
 };
 
 var userApi = {
-  login: function() {
-
+  login: function(data) {
+    $.ajax({
+      url: "/api/login",
+      method: "POST",
+      data: JSON.stringify(data),
+      contentType: "application/json"
+    })
+    .success(function(data) {
+      console.log("successful post", data)
+    })
   },
   signup: function(data) {
     $.ajax({

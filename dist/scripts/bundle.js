@@ -45849,7 +45849,7 @@ var InitializeActions = {
 
 module.exports = InitializeActions;
 
-},{"../api/userApi":218,"../constants/actionTypes":225,"../dispatcher/appDispatcher":226}],216:[function(require,module,exports){
+},{"../api/userApi":218,"../constants/actionTypes":226,"../dispatcher/appDispatcher":227}],216:[function(require,module,exports){
 "use strict";
 
 var Dispatcher = require('../dispatcher/appDispatcher');
@@ -45865,6 +45865,9 @@ var AuthorActions = {
       actionType: ActionTypes.CREATE_USER,
       author: newUser,
     });
+  },
+  login: function(data) {
+    UserApi.login(data);
   },
   updateAuthor: function(author) {
     var updatedAuthor = AuthorApi.saveAuthor(author);
@@ -45888,7 +45891,7 @@ var AuthorActions = {
 
 module.exports = AuthorActions;
 
-},{"../api/userApi":218,"../constants/actionTypes":225,"../dispatcher/appDispatcher":226}],217:[function(require,module,exports){
+},{"../api/userApi":218,"../constants/actionTypes":226,"../dispatcher/appDispatcher":227}],217:[function(require,module,exports){
 module.exports = {
   authors: 
   [
@@ -45927,8 +45930,16 @@ var _clone = function(item) {
 };
 
 var userApi = {
-  login: function() {
-
+  login: function(data) {
+    $.ajax({
+      url: "/api/login",
+      method: "POST",
+      data: JSON.stringify(data),
+      contentType: "application/json"
+    })
+    .success(function(data) {
+      console.log("successful post", data)
+    })
   },
   signup: function(data) {
     $.ajax({
@@ -45999,7 +46010,65 @@ var App = React.createClass({displayName: "App",
 
 module.exports = App;
 
-},{"./common/header":223,"jquery":26,"react":211}],220:[function(require,module,exports){
+},{"./common/header":224,"jquery":26,"react":211}],220:[function(require,module,exports){
+"use strict";
+
+var React = require('react');
+var Router = require('react-router');
+var toastr = require('toastr');
+
+var LoginForm = require('./loginForm');
+var UserActions = require('../../actions/userActions');
+var UserStore = require('../../stores/userStore');
+
+var login = React.createClass({displayName: "login",
+  mixins: [
+    Router.Navigation, Router.state
+  ],
+
+  getInitialState: function() {
+    return {
+      user: {phone: '', password: '' },
+      errors: {},
+      dirty: false,
+    };
+
+  },
+
+  componentWillMount: function() {// calls before the componentn mounted
+  },
+  loginUser: function(){
+    UserActions.login(this.state.user);
+  },
+  setUserState: function(event) {
+    this.setState({dirty: true});
+    var field = event.target.name;
+    var value = event.target.value;
+    this.state.user[field] = value;
+    return this.setState({user: this.state.user});
+  },
+
+  userFormIsValid: function() {
+    var formIsValid = true;
+    this.state.errors = {}; //clears previous errors
+    this.setState({errors: this.state.errors});
+    return formIsValid;
+  },
+
+  render: function() {
+    console.log(this.state.user)
+    return (
+      React.createElement(LoginForm, {user: this.state.user, 
+          onChange: this.setUserState, 
+          onLogin: this.loginUser, 
+          errors: this.state.errors})
+    );
+  }
+});
+
+module.exports = login;
+
+},{"../../actions/userActions":216,"../../stores/userStore":230,"./loginForm":221,"react":211,"react-router":51,"toastr":213}],221:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -46010,14 +46079,7 @@ var signupForm = React.createClass({displayName: "signupForm",
   render: function() {
     return (
       React.createElement("form", null, 
-        React.createElement("h1", null, "Manage Author"), 
-        React.createElement(Input, {
-          name: "name", 
-          label: "Name", 
-          onChange: this.props.onChange, 
-          value: this.props.user.name, 
-          error: this.props.errors.name}), 
-
+        React.createElement("h1", null, "User Login"), 
         React.createElement(Input, {
           name: "phone", 
           label: "phone", 
@@ -46032,7 +46094,7 @@ var signupForm = React.createClass({displayName: "signupForm",
           value: this.props.user.password, 
           error: this.props.errors.password}), 
 
-        React.createElement("input", {type: "submit", value: "Save", className: "btn btn-default", onClick: this.props.onSave})
+        React.createElement("input", {type: "submit", value: "Login", className: "btn btn-default", onClick: this.props.onLogin})
       )
     );
   }
@@ -46040,7 +46102,7 @@ var signupForm = React.createClass({displayName: "signupForm",
 
 module.exports = signupForm;
 
-},{"../common/textInput":224,"react":211}],221:[function(require,module,exports){
+},{"../common/textInput":225,"react":211}],222:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -46124,7 +46186,7 @@ var signup = React.createClass({displayName: "signup",
 
 module.exports = signup;
 
-},{"../../actions/userActions":216,"../../stores/userStore":229,"./signupForm":222,"react":211,"react-router":51,"toastr":213}],222:[function(require,module,exports){
+},{"../../actions/userActions":216,"../../stores/userStore":230,"./signupForm":223,"react":211,"react-router":51,"toastr":213}],223:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -46165,7 +46227,7 @@ var signupForm = React.createClass({displayName: "signupForm",
 
 module.exports = signupForm;
 
-},{"../common/textInput":224,"react":211}],223:[function(require,module,exports){
+},{"../common/textInput":225,"react":211}],224:[function(require,module,exports){
 "use strict"
 
 var React = require('react');
@@ -46192,7 +46254,7 @@ var Header = React.createClass({displayName: "Header",
 
 module.exports = Header;
 
-},{"react":211,"react-router":51}],224:[function(require,module,exports){
+},{"react":211,"react-router":51}],225:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -46229,7 +46291,7 @@ var Input = React.createClass({displayName: "Input",
 
 module.exports = Input;
 
-},{"react":211}],225:[function(require,module,exports){
+},{"react":211}],226:[function(require,module,exports){
 "use strict";
 
 var keyMirror = require('fbjs/lib/keyMirror');
@@ -46240,13 +46302,13 @@ module.exports = keyMirror({
   UPDATE_AUTHOR: null,
 });
 
-},{"fbjs/lib/keyMirror":6}],226:[function(require,module,exports){
+},{"fbjs/lib/keyMirror":6}],227:[function(require,module,exports){
 
 var Dispatcher = require('flux').Dispatcher;
 
 module.exports = new Dispatcher();
 
-},{"flux":7}],227:[function(require,module,exports){
+},{"flux":7}],228:[function(require,module,exports){
 "use strict";
 var React = require('react');
 var Router = require('react-router');
@@ -46255,7 +46317,7 @@ var InitializeActions = require('./actions/initializeActions');
 
 InitializeActions.initApp();
 
-},{"./actions/initializeActions":215,"./routes":228,"react":211,"react-router":51}],228:[function(require,module,exports){
+},{"./actions/initializeActions":215,"./routes":229,"react":211,"react-router":51}],229:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -46275,7 +46337,7 @@ render((
   )
 ), document.getElementById("app"));
 
-},{"./components/app":219,"./components/auth/login":220,"./components/auth/signup":221,"react":211,"react-dom":31,"react-router":51}],229:[function(require,module,exports){
+},{"./components/app":219,"./components/auth/login":220,"./components/auth/signup":222,"react":211,"react-dom":31,"react-router":51}],230:[function(require,module,exports){
 "use strict";
 
 var Dispatcher = require('../dispatcher/appDispatcher');
@@ -46328,4 +46390,4 @@ Dispatcher.register(function(action) {
 
 module.exports = AuthorStore;
 
-},{"../constants/actionTypes":225,"../dispatcher/appDispatcher":226,"events":4,"lodash":27,"object-assign":28}]},{},[227]);
+},{"../constants/actionTypes":226,"../dispatcher/appDispatcher":227,"events":4,"lodash":27,"object-assign":28}]},{},[228]);

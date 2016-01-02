@@ -14,6 +14,9 @@ var AuthorActions = {
       author: newUser,
     });
   },
+  login: function(data) {
+    UserApi.login(data);
+  },
   updateAuthor: function(author) {
     var updatedAuthor = AuthorApi.saveAuthor(author);
 

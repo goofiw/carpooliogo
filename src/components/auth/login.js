@@ -1,39 +1,56 @@
 "use strict";
 
 var React = require('react');
-var Input = require('../common/textInput');
+var Router = require('react-router');
+var toastr = require('toastr');
 
-var signupForm = React.createClass({
+var LoginForm = require('./loginForm');
+var UserActions = require('../../actions/userActions');
+var UserStore = require('../../stores/userStore');
+
+var login = React.createClass({
+  mixins: [
+    Router.Navigation, Router.state
+  ],
+
+  getInitialState: function() {
+    return {
+      user: {phone: '', password: '' },
+      errors: {},
+      dirty: false,
+    };
+
+  },
+
+  componentWillMount: function() {// calls before the componentn mounted
+  },
+  loginUser: function(){
+    UserActions.login(this.state.user);
+  },
+  setUserState: function(event) {
+    this.setState({dirty: true});
+    var field = event.target.name;
+    var value = event.target.value;
+    this.state.user[field] = value;
+    return this.setState({user: this.state.user});
+  },
+
+  userFormIsValid: function() {
+    var formIsValid = true;
+    this.state.errors = {}; //clears previous errors
+    this.setState({errors: this.state.errors});
+    return formIsValid;
+  },
 
   render: function() {
+    console.log(this.state.user)
     return (
-      <form>
-        <h1>Manage Author</h1>
-        <Input
-          name="name"
-          label="Name"
-          onChange={this.props.onChange}
-          value={this.props.user.name} 
-          error={this.props.errors.name}/>
-
-        <Input 
-          name="phone"
-          label="phone"
-          onChange={this.props.onChange}
-          value={this.props.user.phone} 
-          error={this.props.errors.phone} />
-
-        <Input 
-          name="password"
-          label="password"
-          onChange={this.props.onChange}
-          value={this.props.user.password} 
-          error={this.props.errors.password} />
-
-        <input type="submit" value="Save" className="btn btn-default" onClick={this.props.onSave} />
-      </form>
+      <LoginForm user={this.state.user}
+          onChange={this.setUserState} 
+          onLogin={this.loginUser} 
+          errors={this.state.errors} />
     );
   }
 });
 
-module.exports = signupForm;
+module.exports = login;
