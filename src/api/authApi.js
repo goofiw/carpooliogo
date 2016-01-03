@@ -51,7 +51,12 @@ var AuthApi = {
       })
       .success(function(data) {
         console.log("data from check token", data);
-
+        if(data.user) {
+          Dispatcher.dispatch({
+            actionType: ActionTypes.USER_LOGGED_IN,
+            user: data.user
+          })
+        }        
       })
     }
   }
