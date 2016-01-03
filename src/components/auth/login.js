@@ -5,13 +5,10 @@ var Router = require('react-router');
 var toastr = require('toastr');
 
 var LoginForm = require('./loginForm');
-var UserActions = require('../../actions/userActions');
-var UserStore = require('../../stores/userStore');
+var AuthActions = require('../../actions/authActions');
+var UserStore = require('../../stores/authStore');
 
 var login = React.createClass({
-  mixins: [
-    Router.Navigation, Router.state
-  ],
 
   getInitialState: function() {
     return {
@@ -21,11 +18,8 @@ var login = React.createClass({
     };
 
   },
-
-  componentWillMount: function() {// calls before the componentn mounted
-  },
   loginUser: function(){
-    UserActions.login(this.state.user);
+    AuthActions.login(this.state.user);
   },
   setUserState: function(event) {
     this.setState({dirty: true});

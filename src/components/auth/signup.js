@@ -5,8 +5,8 @@ var Router = require('react-router');
 var toastr = require('toastr');
 
 var UserForm = require('./signupForm');
-var UserActions = require('../../actions/userActions');
-var UserStore = require('../../stores/userStore');
+var AuthActions = require('../../actions/authActions');
+var AuthStore = require('../../stores/authStore');
 
 var signup = React.createClass({
   mixins: [
@@ -58,11 +58,7 @@ var signup = React.createClass({
     if (!this.userFormIsValid()) {
       return;
     }
-    if(this.state.user.id) {
-      UserActions.updateUser(this.state.user);
-    } else {
-      UserActions.createUser(this.state.user);
-    }
+    AuthActions.createUser(this.state.user);
     this.setState({dirty: false});
     toastr.success("user saved.");
     this.transitionTo('/');

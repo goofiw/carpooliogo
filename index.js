@@ -46,4 +46,4 @@ if (process.env.NODE_ENV == 'production'){
   port = 8080;
 }
 app.listen(process.env.PORT || port);
-console.log('listening on ', port)
+console.log('listening on ', port, 'at', new Date())

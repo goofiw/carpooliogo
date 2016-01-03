@@ -16,7 +16,7 @@ co(function * () {
 function *signup(next) {
   var userData = this.request.body;
   console.log(this.request.body);
-  var user = yield users.find({username: userData.username})
+  var user = yield users.find({phone: userData.phone})
   console.log('user',user)
   if(user.length === 1) {
     if(bcrypt.compare(userData.password, user.hash)) {
@@ -36,15 +36,13 @@ function *signup(next) {
       }
     })   
     yield users.insert({ 
-      username: userData.username, 
       hash: hash, 
       jwt: token, 
-      preferance: userData.preferance,
       phone: userData.phone,
       name: userData.name
     });
     console.log('user after insert');
-    this.body = yield users.findOne({username: userData.username});
+    this.body = yield users.findOne({phone: userData.phone});
   }
 }
 
@@ -54,6 +52,7 @@ function *checkToken(next) {
   var user = yield users.findOne({jwt: providedToken})
   if (user) {
     this.state.user = user;
+    this.body = {user: user.name}
     this.status = 200;
   } else {
     this.status = 403;
@@ -79,9 +78,9 @@ function *login(next) {
   console.log('user data in login', userData);
   console.log('the login request', this.request)
   // console.log('logging body in login', this);
-  var user = yield users.findOne({username: userData.username})
+  var user = yield users.findOne({phone: userData.phone})
   if(user && bcrypt.compare(userData.password, user.hash)) {
-    user.jwt = jwt.sign({ foo: user }, process.env.JWTSECRET);
+    user.jwt = jwt.sign({ user: user.name }, process.env.JWTSECRET);
     yield users.updateById(user._id, user)
     this.user = user;
     this.body = user;

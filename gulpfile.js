@@ -8,6 +8,8 @@ var reactify = require('reactify');
 var source = require('vinyl-source-stream');
 var concat = require('gulp-concat');
 var eslint = require('gulp-eslint'); //lints js and jsx files
+var spawn = require('child_process').spawn;
+var node;
 
 var config = {
   port: 3000,
@@ -70,7 +72,22 @@ gulp.task('lint', function() {
 
 gulp.task('watch', function() {
   gulp.watch(config.paths.html, ['html']);
-  gulp.watch(config.paths.js, ['js', 'lint']);
+  gulp.watch(config.paths.js, ['js', 'lint', 'server']);
 })
 
-gulp.task('default', ['html', 'js', 'css', 'lint', 'open', 'watch']);
+gulp.task('server', function() {
+  if (node) node.kill()
+  node = spawn('node', ['index.js'], {stdio: 'inherit'})
+  node.on('close', function (code) {
+    if (code === 8) {
+      gulp.log('Error detected, waiting for changes...');
+    }
+  });
+})
+
+// clean up if an error goes unhandled.
+process.on('exit', function() {
+    if (node) node.kill()
+})
+
+gulp.task('default', ['html', 'js', 'css', 'lint', 'watch', 'server']);

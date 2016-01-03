@@ -45833,103 +45833,124 @@ module.exports = warning;
 "use strict";
 
 var Dispatcher = require('../dispatcher/appDispatcher');
-var AuthorApi = require('../api/userApi');
+var AuthApi = require('../api/authApi');
+var ActionTypes = require('../constants/actionTypes');
+
+var AuthActions = {
+  createUser: function(user) {
+    AuthApi.signup(user);
+  },
+  createUserResponse: function(reponse) {
+    Dispatcher.dispatch({
+      actionType: ActionTypes.USER_CREATED,
+      user: response
+    });
+  },
+  login: function(data) {
+    AuthApi.login(data);
+  },
+  loginResponse: function(user) {
+    if(user.jwt) {
+      Dispatcher.dispatch({
+        actionType: ActionTypes.LOGIN_RESPONSE,
+        user: user.name
+      })
+    }
+  },
+  logout: function() {
+    localStorage.removeItem('jwt');
+    Dispatcher.dispatch({
+      actionType: ActionTypes.LOGOUT_USER
+    });
+  },
+  checkToken: function() {
+    var token = localStorage.getItem('jwt');
+    AuthApi.checkToken(token);
+  },
+  receivedUser: function(user) {
+    Dispatcher.dispatch({
+      actionType: ActionTypes.USER_LOGGED_IN,
+      user: user 
+    });
+  }
+};
+
+module.exports = AuthActions;
+
+},{"../api/authApi":218,"../constants/actionTypes":226,"../dispatcher/appDispatcher":227}],216:[function(require,module,exports){
+"use strict";
+
+var Dispatcher = require('../dispatcher/appDispatcher');
+var AuthApi = require('../api/authApi');
+var ActionTypes = require('../constants/actionTypes');
+
+var AuthActions = {
+  createUser: function(user) {
+    AuthApi.signup(user);
+  },
+  createUserResponse: function(reponse) {
+    Dispatcher.dispatch({
+      actionType: ActionTypes.USER_CREATED,
+      user: response
+    });
+  },
+  login: function(data) {
+    AuthApi.login(data);
+  },
+  loginResponse: function(user) {
+    if(user.jwt) {
+      Dispatcher.dispatch({
+        actionType: ActionTypes.LOGIN_RESPONSE,
+        user: user.name
+      })
+    }
+  },
+  logout: function() {
+    localStorage.removeItem('jwt');
+    Dispatcher.dispatch({
+      actionType: ActionTypes.LOGOUT_USER
+    });
+  },
+  checkToken: function() {
+    var token = localStorage.getItem('jwt');
+    AuthApi.checkToken(token);
+  },
+  receivedUser: function(user) {
+    Dispatcher.dispatch({
+      actionType: ActionTypes.USER_LOGGED_IN,
+      user: user 
+    });
+  }
+};
+
+module.exports = AuthActions;
+
+},{"../api/authApi":218,"../constants/actionTypes":226,"../dispatcher/appDispatcher":227}],217:[function(require,module,exports){
+"use strict";
+
+var Dispatcher = require('../dispatcher/appDispatcher');
+var AuthApi = require('../api/authApi');
 var ActionTypes = require('../constants/actionTypes');
 
 var InitializeActions = {
-  initApp: function() {
-    Dispatcher.dispatch({
-      actionType: ActionTypes.INITIALIZE,
-      initialData: {
-        authors: AuthorApi.getAllAuthors()
-      }
-    });
+  initialize: function() {
+    AuthApi.checkToken();
   }
 };
 
 module.exports = InitializeActions;
 
-},{"../api/userApi":218,"../constants/actionTypes":226,"../dispatcher/appDispatcher":227}],216:[function(require,module,exports){
-"use strict";
-
-var Dispatcher = require('../dispatcher/appDispatcher');
-var UserApi = require('../api/userApi');
-var ActionTypes = require('../constants/actionTypes');
-
-var AuthorActions = {
-  createUser: function(user) {
-    var newUser = UserApi.signup(user);
-
-    //tells all the stores that a new author was created
-    Dispatcher.dispatch({
-      actionType: ActionTypes.CREATE_USER,
-      author: newUser,
-    });
-  },
-  login: function(data) {
-    UserApi.login(data);
-  },
-  updateAuthor: function(author) {
-    var updatedAuthor = AuthorApi.saveAuthor(author);
-
-    //tells all the stores that a new author was created
-    Dispatcher.dispatch({
-      actionType: ActionTypes.UPDATE_AUTHOR,
-      author: updatedAuthor,
-    });
-  },
-  deleteAuthor: function(id) {
-    AuthorApi.deleteAuthor(id);
-
-    //tells all the stores that a new author was created
-    Dispatcher.dispatch({
-      actionType: ActionTypes.Delete_AUTHOR,
-      id: id,
-    });
-  }
-};
-
-module.exports = AuthorActions;
-
-},{"../api/userApi":218,"../constants/actionTypes":226,"../dispatcher/appDispatcher":227}],217:[function(require,module,exports){
-module.exports = {
-  authors: 
-  [
-    {
-      id: 'cory-house', 
-      firstName: 'Cory', 
-      lastName: 'House'
-    },  
-    {
-      id: 'scott-allen', 
-      firstName: 'Scott', 
-      lastName: 'Allen'
-    },  
-    {
-      id: 'dan-wahlin', 
-      firstName: 'Dan', 
-      lastName: 'Wahlin'
-    }
-  ]
-};
-
-},{}],218:[function(require,module,exports){
+},{"../api/authApi":218,"../constants/actionTypes":226,"../dispatcher/appDispatcher":227}],218:[function(require,module,exports){
 "use strict";
 
 //This file is mocking a web API by hitting hard coded data.
-var authors = require('./authorData').authors;
 var _ = require('lodash');
 
-//This would be performed on the server in a real app. Just stubbing in.
-var _generateId = function(author) {
-  return author.firstName.toLowerCase() + '-' + author.lastName.toLowerCase();
-};
+var Dispatcher = require('../dispatcher/appDispatcher');
+var ActionTypes = require('../constants/actionTypes');
 
-var _clone = function(item) {
-  return JSON.parse(JSON.stringify(item)); //return cloned copy so that the item is passed by value instead of by reference
-};
 
-var userApi = {
+var AuthApi = {
   login: function(data) {
     $.ajax({
       url: "/api/login",
@@ -45938,7 +45959,14 @@ var userApi = {
       contentType: "application/json"
     })
     .success(function(data) {
+      localStorage.setItem('jwt', data.jwt);
       console.log("successful post", data)
+      if(data.jwt) {
+        Dispatcher.dispatch({
+          actionType: ActionTypes.USER_LOGGED_IN,
+          user: data.name
+        })
+      }      
     })
   },
   signup: function(data) {
@@ -45949,52 +45977,44 @@ var userApi = {
       contentType: "application/json"
     })
     .success(function(data) {
+      localStorage.setItem('jwt', data.jwt);
       console.log("successful post", data)
     })
   },
-  getAllAuthors: function() {
-    return _clone(authors); 
-  },
-
-  getAuthorById: function(id) {
-    var author = _.find(authors, {id: id});
-    return _clone(author);
-  },
-  
-  saveAuthor: function(author) {
-    //pretend an ajax call to web api is made here
-    console.log('Pretend this just saved the author to the DB via AJAX call...');
-    
-    if (author.id) {
-      var existingAuthorIndex = _.indexOf(authors, _.find(authors, {id: author.id})); 
-      authors.splice(existingAuthorIndex, 1, author);
+  checkToken: function() {
+    var jwt = localStorage.getItem("jwt");
+    if (typeof jwt !== "string") {
+      console.log("jwt", jwt, typeof jwt)
+      return null;
     } else {
-      //Just simulating creation here.
-      //The server would generate ids for new authors in a real app.
-      //Cloning so copy returned is passed by value rather than by reference.
-      author.id = _generateId(author);
-      authors.push(author);
+      $.ajax({
+        url: "/api/authcheck",
+        method: "GET",
+        headers: {authorization: jwt}
+      })
+      .success(function(data) {
+        console.log("data from check token", data);
+
+      })
     }
-
-    return _clone(author);
-  },
-
-  deleteAuthor: function(id) {
-    console.log('Pretend this just deleted the author from the DB via an AJAX call...');
-    _.remove(authors, { id: id});
   }
+  
 };
 
-module.exports = userApi;
+module.exports = AuthApi;
 
-},{"./authorData":217,"lodash":27}],219:[function(require,module,exports){
+},{"../constants/actionTypes":226,"../dispatcher/appDispatcher":227,"lodash":27}],219:[function(require,module,exports){
 $ = jQuery = require('jquery');
 
 var React = require('react')
 
 var Header = require('./common/header');
+var InitializeActions = require('../actions/initializeActions');
 
 var App = React.createClass({displayName: "App",
+  componentDidMount: function() {
+    InitializeActions.initialize();
+  },
   render: function(){
     return (
         React.createElement("div", null, 
@@ -46010,7 +46030,7 @@ var App = React.createClass({displayName: "App",
 
 module.exports = App;
 
-},{"./common/header":224,"jquery":26,"react":211}],220:[function(require,module,exports){
+},{"../actions/initializeActions":217,"./common/header":224,"jquery":26,"react":211}],220:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -46018,13 +46038,10 @@ var Router = require('react-router');
 var toastr = require('toastr');
 
 var LoginForm = require('./loginForm');
-var UserActions = require('../../actions/userActions');
-var UserStore = require('../../stores/userStore');
+var AuthActions = require('../../actions/authActions');
+var UserStore = require('../../stores/authStore');
 
 var login = React.createClass({displayName: "login",
-  mixins: [
-    Router.Navigation, Router.state
-  ],
 
   getInitialState: function() {
     return {
@@ -46034,11 +46051,8 @@ var login = React.createClass({displayName: "login",
     };
 
   },
-
-  componentWillMount: function() {// calls before the componentn mounted
-  },
   loginUser: function(){
-    UserActions.login(this.state.user);
+    AuthActions.login(this.state.user);
   },
   setUserState: function(event) {
     this.setState({dirty: true});
@@ -46068,7 +46082,7 @@ var login = React.createClass({displayName: "login",
 
 module.exports = login;
 
-},{"../../actions/userActions":216,"../../stores/userStore":230,"./loginForm":221,"react":211,"react-router":51,"toastr":213}],221:[function(require,module,exports){
+},{"../../actions/authActions":216,"../../stores/authStore":230,"./loginForm":221,"react":211,"react-router":51,"toastr":213}],221:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -46110,8 +46124,8 @@ var Router = require('react-router');
 var toastr = require('toastr');
 
 var UserForm = require('./signupForm');
-var UserActions = require('../../actions/userActions');
-var UserStore = require('../../stores/userStore');
+var AuthActions = require('../../actions/authActions');
+var AuthStore = require('../../stores/authStore');
 
 var signup = React.createClass({displayName: "signup",
   mixins: [
@@ -46163,11 +46177,7 @@ var signup = React.createClass({displayName: "signup",
     if (!this.userFormIsValid()) {
       return;
     }
-    if(this.state.user.id) {
-      UserActions.updateUser(this.state.user);
-    } else {
-      UserActions.createUser(this.state.user);
-    }
+    AuthActions.createUser(this.state.user);
     this.setState({dirty: false});
     toastr.success("user saved.");
     this.transitionTo('/');
@@ -46186,7 +46196,7 @@ var signup = React.createClass({displayName: "signup",
 
 module.exports = signup;
 
-},{"../../actions/userActions":216,"../../stores/userStore":230,"./signupForm":223,"react":211,"react-router":51,"toastr":213}],223:[function(require,module,exports){
+},{"../../actions/authActions":216,"../../stores/authStore":230,"./signupForm":223,"react":211,"react-router":51,"toastr":213}],223:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -46234,17 +46244,52 @@ var React = require('react');
 var Router = require('react-router');
 var Link = Router.Link;
 
+var AuthStore = require('../../stores/authStore');
+var AuthActions = require('../../actions/AuthActions');
+
 var Header = React.createClass({displayName: "Header",
+  getInitialState: function() {
+    return {
+      user: AuthStore.getLoggedInUser()
+    }
+  },
+  componentWillMount: function() {
+    AuthStore.addChangeListener(this.updateUser);
+  },
+  componentWillUnmount: function() {
+    AuthStore.removeChangeListener(this.updateUser);
+  },
+  updateUser: function() {
+    this.setState({user: AuthStore.getLoggedInUser()});
+  },
+  logout: function() {
+    AuthActions.logout();
+  },
   render: function() {
+    var loginState; 
+    console.log('state',this.state.user)
+    if (typeof this.state.user === "string") {
+      loginState = (
+        React.createElement("div", null, 
+          React.createElement("li", null, "Logged in as ", this.state.user), 
+          React.createElement("li", null, React.createElement(Link, {onClick: this.logout, to: "login"}, "logout"))
+        )      
+        )
+    } else {
+      loginState = ( 
+        React.createElement("div", null, 
+          React.createElement("li", null, React.createElement(Link, {to: "signup"}, "sign up")), 
+          React.createElement("li", null, React.createElement(Link, {to: "login"}, "login"))
+        )
+        )
+    }
     return (
       React.createElement("nav", {className: "navbar navbar-default"}, 
         React.createElement("div", {className: "container-fluid"}, 
           React.createElement("a", {href: "/", className: "navbar-brand"}, 
           "LOGO"), 
         React.createElement("ul", {className: "nav navbar-nav"}, 
-          React.createElement("li", null, React.createElement(Link, {to: "app"}, "Home")), 
-          React.createElement("li", null, React.createElement(Link, {to: "signup"}, "sign up")), 
-          React.createElement("li", null, React.createElement(Link, {to: "login"}, "login"))
+          loginState
         )
       )
     )
@@ -46254,7 +46299,7 @@ var Header = React.createClass({displayName: "Header",
 
 module.exports = Header;
 
-},{"react":211,"react-router":51}],225:[function(require,module,exports){
+},{"../../actions/AuthActions":215,"../../stores/authStore":230,"react":211,"react-router":51}],225:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -46298,6 +46343,11 @@ var keyMirror = require('fbjs/lib/keyMirror');
 
 module.exports = keyMirror({
   CREATE_USER: null,
+  CREATE_USER_RESPONSE: null,
+  LOGIN_USER_RESPONSE: null,
+  USER_LOGGED_IN: null,
+  LOGIN_USER: null,
+  LOGOUT_USER: null,
   INITIALIZE: null,
   UPDATE_AUTHOR: null,
 });
@@ -46315,9 +46365,7 @@ var Router = require('react-router');
 var routes = require('./routes');
 var InitializeActions = require('./actions/initializeActions');
 
-InitializeActions.initApp();
-
-},{"./actions/initializeActions":215,"./routes":229,"react":211,"react-router":51}],229:[function(require,module,exports){
+},{"./actions/initializeActions":217,"./routes":229,"react":211,"react-router":51}],229:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -46346,9 +46394,9 @@ var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 var _ = require('lodash');
 
-var _authors = [];
+var _loggedInUser = {}; 
 
-var AuthorStore = assign({}, EventEmitter.prototype, {
+var AuthStore = assign({}, EventEmitter.prototype, {
   addChangeListener: function(callback) {
     this.on('change', callback);
   },
@@ -46356,38 +46404,33 @@ var AuthorStore = assign({}, EventEmitter.prototype, {
     this.removeListener('change', callback);
   },
   emitChange: function() {
+    console.log('user store changed');
     this.emit('change');
   },
-  getAllAuthors: function() {
-    return _authors;
+  getLoggedInUser: function() {
+    return _loggedInUser;
   },
-  getAuthorById: function(id) {
-    return _.find(_authors, {id: id});
+  setLoggedInUser: function(name) {
+    console.log(name)
+    _loggedInUser = name;
   }
 });
 
 Dispatcher.register(function(action) {
   switch(action.actionType) {
-    case ActionTypes.INITIALIZE:
-      _authors = action.initialData.authors;
+    case ActionTypes.USER_LOGGED_IN:
+      _loggedInUser = action.user;
       break;
     case ActionTypes.CREATE_AUTHOR:
       _authors.push(action.author);
       break;
-    case ActionTypes.UPDATE_AUTHOR:
-      var existingAuthor = _.find(_authors, {id: action.author.id});
-      var existingAuthorIndex = _.indexOf(_authors, existingAuthor);
-      _authors.splice(existingAuthorIndex, 1, action.author);
-      break;
-    case ActionTypes.DELETE_AUTHOR:
-      _.remove(_authors, function(author) {
-        return action.id === author.id;
-      });
+    case ActionTypes.LOGOUT_USER:
+      _loggedInUser = false;
       break;
   }
-  AuthorStore.emitChange();//call after changes are made so components know
+  AuthStore.emitChange();//call after changes are made so components know
 });
 
-module.exports = AuthorStore;
+module.exports = AuthStore;
 
 },{"../constants/actionTypes":226,"../dispatcher/appDispatcher":227,"events":4,"lodash":27,"object-assign":28}]},{},[228]);
