@@ -6,12 +6,18 @@ var co = require('co');
 var bcrypt = require('co-bcrypt');
 var jwt = require('jsonwebtoken');
 
+var sms = require('../modules/sms');
+
 
 var users = wrap(db.get('users'));
 
 co(function * () {
   var users = yield users.find({});
 });
+
+function generateCode() {
+  return Math.floor(Math.random() * (999999 - 111111)) + 111111;
+}
 
 function *signup(next) {
   var userData = this.request.body;
@@ -35,12 +41,16 @@ function *signup(next) {
         this.body = {message: 'error updating jwt'};
       }
     })   
+    var code = generateCode();
     yield users.insert({ 
+      confirmationCode: code,
+      numberConfirmed: false,
       hash: hash, 
       jwt: token, 
       phone: userData.phone,
       name: userData.name
     });
+    sms.sendMessage(null, code)
     console.log('user after insert');
     this.body = yield users.findOne({phone: userData.phone});
   }
@@ -57,6 +67,18 @@ function *checkToken(next) {
   } else {
     this.status = 403;
     this.body = {message: 'failed token auth'};
+  }
+}
+
+function *confirmUser(next) {
+  var providedToken = this.header.authorization;
+  var user = yield users.findOne({jwt: providedToken})
+  var data = this.request.body;
+  if (user) {
+    this.state.user = user;
+    user.confirmed = true;
+    yield user.update({confirmationCode: data.code}, {confirmed: true});
+    this.body = {message: "confirmed"}
   }
 }
 

@@ -48,6 +48,7 @@
     "reactify": "^1.1.1",
     "toaster": "^0.1.2",
     "toastr": "^2.1.2",
+    "twilio": "^2.8.0",
     "vinyl-source-stream": "^1.1.0"
   }
 }
