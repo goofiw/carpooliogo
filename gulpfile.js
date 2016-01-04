@@ -9,6 +9,7 @@ var source = require('vinyl-source-stream');
 var concat = require('gulp-concat');
 var eslint = require('gulp-eslint'); //lints js and jsx files
 var spawn = require('child_process').spawn;
+var babel = require('gulp-babel');
 var node;
 
 var config = {

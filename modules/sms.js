@@ -6,7 +6,7 @@ var sms = {
   sendMessage: function(number, message) {
 
     client.sms.messages.post({
-        to:'+17037323656',
+        to: number,
         from:'+12065390134',
         body: message
     }, function(err, text) {

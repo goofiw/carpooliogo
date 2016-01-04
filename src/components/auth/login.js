@@ -3,13 +3,13 @@
 var React = require('react');
 var Router = require('react-router');
 var toastr = require('toastr');
-
+var phone = require('phone');
 var LoginForm = require('./loginForm');
 var AuthActions = require('../../actions/authActions');
 var UserStore = require('../../stores/authStore');
 
 var login = React.createClass({
-
+  mixins: [History],
   getInitialState: function() {
     return {
       user: {phone: '', password: '' },
@@ -19,7 +19,12 @@ var login = React.createClass({
 
   },
   loginUser: function(){
+    var confirmedPhone = phone(this.state.user.phone, "US");
+    if (confirmedPhone.length != 0) {
+      this.state.user.phone = confirmedPhone[0];
+    }
     AuthActions.login(this.state.user);
+    this.history.pushState(null, `/event`, query);
   },
   setUserState: function(event) {
     this.setState({dirty: true});

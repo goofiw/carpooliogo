@@ -5,6 +5,7 @@ var db = monk('localhost/testCarpool');
 var co = require('co');
 var bcrypt = require('co-bcrypt');
 var jwt = require('jsonwebtoken');
+var phone = require('phone');
 
 var sms = require('../modules/sms');
 
@@ -50,7 +51,7 @@ function *signup(next) {
       phone: userData.phone,
       name: userData.name
     });
-    sms.sendMessage(null, code)
+    // sms.sendMessage(userData.phone, 'carpoolio code: ' + code)
     console.log('user after insert');
     this.body = yield users.findOne({phone: userData.phone});
   }

@@ -3,6 +3,7 @@
 var React = require('react');
 var Router = require('react-router');
 var toastr = require('toastr');
+var phone = require('phone');
 
 var UserForm = require('./signupForm');
 var AuthActions = require('../../actions/authActions');
@@ -48,6 +49,13 @@ var signup = React.createClass({
       formIsValid = false;
       this.state.errors.name = "Name must be at least 3 chars";
     }
+    var confirmedPhone = phone(this.state.user.phone, "US");
+    if (confirmedPhone.length == 0) {
+      formIsValid = false;
+      this.state.errors.phone = "Please enter a valid U.S. 10 digit number";
+    } else { 
+      this.state.user.phone = confirmedPhone[0];
+    }
 
     this.setState({errors: this.state.errors});
     return formIsValid;
@@ -61,7 +69,7 @@ var signup = React.createClass({
     AuthActions.createUser(this.state.user);
     this.setState({dirty: false});
     toastr.success("user saved.");
-    this.transitionTo('/');
+    this.context.router.transitionTo('/');
   },
 
   render: function() {
