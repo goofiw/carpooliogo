@@ -4,12 +4,13 @@ var gulp = require('gulp');
 var connect = require('gulp-connect'); //run local dev server
 var open = require('gulp-open'); //open a url in a web browser
 var browserify = require('browserify');
-var reactify = require('reactify');
+var babelify = require("babelify");
 var source = require('vinyl-source-stream');
 var concat = require('gulp-concat');
 var eslint = require('gulp-eslint'); //lints js and jsx files
 var spawn = require('child_process').spawn;
 var babel = require('gulp-babel');
+var sourcemaps = require('gulp-sourcemaps');
 var node;
 
 var config = {
@@ -49,15 +50,29 @@ gulp.task('html', function(){
     .pipe(connect.reload())
 });
 
-gulp.task('js', function(){
-  browserify(config.paths.mainJs)
-    .transform(reactify)
-    .bundle()
-    .on('error', console.error.bind(console))
-    .pipe(source('bundle.js'))
-    .pipe(gulp.dest(config.paths.dist + '/scripts'))
-    .pipe(connect.reload());
+
+gulp.task('js', function () {
+  browserify({
+    entries: 'src/routes.js',
+    extensions: ['es6', '.jsx', '.js'],
+    debug: true
+  })
+  .transform(babelify, {presets: ["es2015", "stage-0", "react"]})
+  .bundle()
+  .pipe(source('bundle.js'))
+  .pipe(gulp.dest('dist'));
 });
+
+// gulp.task('js', function(){
+//   return gulp.src(config.paths.js)
+//     .pipe(sourcemaps.init())
+//     .pipe(babel({
+//       presets: ["react", "es2015"]
+//     }))
+//     .pipe(concat("bundle.js"))
+//     .pipe(sourcemaps.write("."))
+//     .pipe(gulp.dest("dist"));
+// });
 
 gulp.task('css', function() {
   gulp.src(config.paths.css)

@@ -1,7 +1,7 @@
 "use strict";
 
-var React = require('react');
-var Input = require('../common/textInput');
+import React from 'react';
+import Input from '../common/textInput';
 
 var signupForm = React.createClass({
 

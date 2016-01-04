@@ -1,8 +1,8 @@
 "use strict";
 
-var Dispatcher = require('../dispatcher/appDispatcher');
-var AuthApi = require('../api/authApi');
-var ActionTypes = require('../constants/actionTypes');
+import Dispatcher from '../dispatcher/appDispatcher';
+import AuthApi from '../api/authApi';
+import ActionTypes from '../constants/actionTypes';
 
 var InitializeActions = {
   initialize: function() {

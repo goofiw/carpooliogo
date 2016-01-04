@@ -1,15 +1,14 @@
-"use strict";
 
-var React = require('react');
+import React from 'react';
 
-var Router = require('react-router').Router
-var Route = require('react-router').Route
-var Link = require('react-router').Link
-var render = require('react-dom').render
-var createHistory = require('history').createHistory();
+import {Router, Route, Link} from 'react-router';
+import {render} from 'react-dom';
+import {createHistory} from 'history';
+
+var history = createHistory();
 
 render((
-  <Router history={createHistory}>
+  <Router history={history}>
     <Route path="/" component={require('./components/app')}>
       <Route path="signup" component={require('./components/auth/signup')} />
       <Route path="login" component={require('./components/auth/login')} />

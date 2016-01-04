@@ -8,7 +8,7 @@ import _ from 'lodash';
 
 var _loggedInUser = {}; 
 
-var AuthStore = assign({}, EventEmitter.prototype, {
+var EventStore = assign({}, EventEmitter.prototype, {
   addChangeListener: function(callback) {
     this.on('change', callback);
   },
@@ -40,7 +40,7 @@ Dispatcher.register(function(action) {
       _loggedInUser = false;
       break;
   }
-  AuthStore.emitChange();//call after changes are made so components know
+  EventStore.emitChange();//call after changes are made so components know
 });
 
-module.exports = AuthStore;
+module.exports = EventStore;

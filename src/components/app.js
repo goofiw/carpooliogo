@@ -1,9 +1,9 @@
-$ = jQuery = require('jquery');
+import $ from 'jquery';
 
-var React = require('react')
+import React from 'react';
 
-var Header = require('./common/header');
-var InitializeActions = require('../actions/initializeActions');
+import Header from './common/header';
+import InitializeActions from '../actions/initializeActions';
 
 var App = React.createClass({
   componentDidMount: function() {

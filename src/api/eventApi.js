@@ -2,13 +2,12 @@
 
 //This file is mocking a web API by hitting hard coded data.
 import _ from 'lodash';
-import $ from 'jquery';
 
 import Dispatcher from '../dispatcher/appDispatcher';
 import ActionTypes from '../constants/actionTypes';
 
 
-var AuthApi = {
+var EventApi = {
   login: function(data) {
     $.ajax({
       url: "/api/login",
@@ -19,12 +18,12 @@ var AuthApi = {
     .success(function(data) {
       localStorage.setItem('jwt', data.jwt);
       console.log("successful post", data)
-      // if(data.jwt) {
-      //   Dispatcher.dispatch({
-      //     actionType: ActionTypes.USER_LOGGED_IN,
-      //     user: data.name
-      //   })
-      // }      
+      if(data.jwt) {
+        Dispatcher.dispatch({
+          actionType: ActionTypes.USER_LOGGED_IN,
+          user: data.name
+        })
+      }      
     })
   },
   signup: function(data) {
@@ -64,4 +63,4 @@ var AuthApi = {
   
 };
 
-module.exports = AuthApi;
+module.exports = EventApi;

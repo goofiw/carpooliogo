@@ -3,7 +3,7 @@
 import React from 'react';
 import Input from '../common/textInput';
 
-var signupForm = React.createClass({
+var eventForm = React.createClass({
 
   render: function() {
     return (
@@ -17,18 +17,11 @@ var signupForm = React.createClass({
           error={this.props.errors.name}/>
 
         <Input 
-          name="phone"
+          name="url"
           label="phone"
           onChange={this.props.onChange}
           value={this.props.user.phone} 
           error={this.props.errors.phone} />
-
-        <Input 
-          name="password"
-          label="password"
-          onChange={this.props.onChange}
-          value={this.props.user.password} 
-          error={this.props.errors.password} />
 
         <input type="submit" value="Save" className="btn btn-default" onClick={this.props.onSave} />
       </form>
@@ -36,4 +29,4 @@ var signupForm = React.createClass({
   }
 });
 
-module.exports = signupForm;
+module.exports = eventForm;

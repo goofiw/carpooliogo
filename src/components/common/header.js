@@ -1,11 +1,10 @@
 "use strict"
 
-var React = require('react');
-var Router = require('react-router');
-var Link = Router.Link;
+import React from 'react';
+import {Router, Link} from 'react-router';
 
-var AuthStore = require('../../stores/authStore');
-var AuthActions = require('../../actions/AuthActions');
+import AuthStore from '../../stores/authStore';
+import AuthActions from '../../actions/AuthActions';
 
 var Header = React.createClass({
   getInitialState: function() {

@@ -1,6 +1,6 @@
 "use strict";
 
-var keyMirror = require('fbjs/lib/keyMirror');
+import keyMirror from 'fbjs/lib/keyMirror';
 
 module.exports = keyMirror({
   CREATE_USER: null,

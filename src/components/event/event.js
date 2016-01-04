@@ -3,28 +3,19 @@
 import React from 'react';
 import Router from 'react-router';
 import toastr from 'toastr';
-import phone from 'phone';
 
-import UserForm from './signupForm';
-import AuthActions from '../../actions/authActions';
-import AuthStore from '../../stores/authStore';
+import eventForm from './eventForm';
+import eventActions from '../../actions/eventActions';
+import eventStore from '../../stores/eventStore';
 
-var signup = React.createClass({
+var createEvent = React.createClass({
 
-  statics: {
-    willTransitionFrom: function(transition, component) {
-      if (component.state.dirty && !confirm('Leave without saving?')) {
-        transition.abort();
-      } 
-    }
-  },
   getInitialState: function() {
     return {
-      user: {name: '', phone: '', password: '' },
+      createEvent: {name: '', url: ''},
       errors: {},
       dirty: false,
     };
-
   },
 
   componentWillMount: function() {// calls before the componentn mounted
@@ -38,46 +29,39 @@ var signup = React.createClass({
     return this.setState({user: this.state.user});
   },
 
-  userFormIsValid: function() {
+  eventFormIsValid: function() {
     var formIsValid = true;
     this.state.errors = {}; //clears previous errors
 
-    if (this.state.user.name.length < 3) {
+    if (this.state.createEvent.name.length < 3) {
       formIsValid = false;
       this.state.errors.name = "Name must be at least 3 chars";
-    }
-    var confirmedPhone = phone(this.state.user.phone, "US");
-    if (confirmedPhone.length == 0) {
-      formIsValid = false;
-      this.state.errors.phone = "Please enter a valid U.S. 10 digit number";
-    } else { 
-      this.state.user.phone = confirmedPhone[0];
     }
 
     this.setState({errors: this.state.errors});
     return formIsValid;
   },
 
-  saveUser: function(event) {
+  saveEvent: function(event) {
     event.preventDefault();
     if (!this.userFormIsValid()) {
       return;
     }
-    AuthActions.createUser(this.state.user);
+    EventActions.createEvent(this.state.createEvent);
     this.setState({dirty: false});
     toastr.success("user saved.");
-    this.context.router.transitionTo('/');
+    this.transitionTo('/');
   },
 
   render: function() {
-    console.log(this.state.user)
+    console.log(this.state.createEvent)
     return (
-      <UserForm user="ass"
+      <EventForm createEvent="ass"
           onChange={this.setUserState} 
-          onSave={this.saveUser} 
+          onSave={this.saveEvent}
           errors={this.state.errors} />
     );
   }
 });
 
-module.exports = signup;
+module.exports = createEvent;

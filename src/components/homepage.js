@@ -1,8 +1,7 @@
 "use strict";
 
-var React = require('react');
-var Router = require('react-router');
-var Link = Router.Link;
+import React from 'react';
+import {Router, Link} from 'react-router';
 
 var Home = React.createClass({
   render: function(){

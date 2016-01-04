@@ -1,15 +1,14 @@
 "use strict";
 
-var React = require('react');
-var Router = require('react-router');
-var toastr = require('toastr');
-var phone = require('phone');
-var LoginForm = require('./loginForm');
-var AuthActions = require('../../actions/authActions');
-var UserStore = require('../../stores/authStore');
+import React from 'react';
+import Router from 'react-router';
+import toastr from 'toastr';
+import phone from 'phone';
+import LoginForm from './loginForm';
+import AuthActions from '../../actions/authActions';
+import UserStore from '../../stores/authStore';
 
 var login = React.createClass({
-  mixins: [History],
   getInitialState: function() {
     return {
       user: {phone: '', password: '' },
@@ -18,13 +17,16 @@ var login = React.createClass({
     };
 
   },
-  loginUser: function(){
+  loginUser: function(event){
+    event.preventDefault();
     var confirmedPhone = phone(this.state.user.phone, "US");
     if (confirmedPhone.length != 0) {
       this.state.user.phone = confirmedPhone[0];
     }
     AuthActions.login(this.state.user);
-    this.history.pushState(null, `/event`, query);
+    // this.context.router.transitionTo('/');
+
+    // this.history.pushState(null, '/event', query);
   },
   setUserState: function(event) {
     this.setState({dirty: true});

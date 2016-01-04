@@ -1,10 +1,10 @@
 "use strict";
 
 import Dispatcher from '../dispatcher/appDispatcher';
-import AuthApi from '../api/authApi';
+import EventApi from '../api/EventApi';
 import ActionTypes from '../constants/actionTypes';
 
-var AuthActions = {
+var eventActions = {
   createUser: function(user) {
     AuthApi.signup(user);
   },
@@ -43,5 +43,5 @@ var AuthActions = {
   }
 };
 
-module.exports = AuthActions;
+module.exports = eventActions;
 
