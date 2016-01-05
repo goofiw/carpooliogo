@@ -4,9 +4,9 @@ import React from 'react';
 import Router from 'react-router';
 import toastr from 'toastr';
 
-import eventForm from './eventForm';
-import eventActions from '../../actions/eventActions';
-import eventStore from '../../stores/eventStore';
+import EventForm from './eventForm';
+import EventActions from '../../actions/eventActions';
+import EventStore from '../../stores/eventStore';
 
 var createEvent = React.createClass({
 
@@ -56,10 +56,13 @@ var createEvent = React.createClass({
   render: function() {
     console.log(this.state.createEvent)
     return (
-      <EventForm createEvent="ass"
-          onChange={this.setUserState} 
-          onSave={this.saveEvent}
-          errors={this.state.errors} />
+      <div>
+        <h1>Create Event</h1>
+        <EventForm createEvent="ass"
+            onChange={this.setUserState} 
+            onSave={this.saveEvent}
+            errors={this.state.errors} />
+      </div>
     );
   }
 });

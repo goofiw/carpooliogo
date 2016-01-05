@@ -12,7 +12,7 @@ render((
     <Route path="/" component={require('./components/app')}>
       <Route path="signup" component={require('./components/auth/signup')} />
       <Route path="login" component={require('./components/auth/login')} />
-      <Route path="event" componenet={require('./components/event/event')} />
+      <Route path="event" component={require('./components/event/event')} />
     </Route>
   </Router>
 ), document.getElementById("app"));
