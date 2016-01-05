@@ -5,7 +5,7 @@ import toastr from 'toastr';
 import phone from 'phone';
 import LoginForm from './loginForm';
 import AuthActions from '../../actions/authActions';
-import UserStore from '../../stores/authStore';
+import AuthStore from '../../stores/authStore';
 import {History} from 'history';
 import BaseComponent from '../common/baseComponent';
 
@@ -15,11 +15,11 @@ class login extends BaseComponent {
     this.state = {
       user: {
         phone: '',
-        password: '',
+        password: ''
       },
       errors: {}
     }
-    this._bind('_loginUser', '_setUserState');
+    this._bind('_loginUser', '_setUserState', '_onAuthChange');
   }
 
   _loginUser(event)  {
@@ -29,10 +29,8 @@ class login extends BaseComponent {
     if (confirmedPhone.length != 0) {
       this.state.user.phone = confirmedPhone[0];
     }
-    // AuthActions.login(this.state.user);
-    // this.context.router.transitionTo('/');
+    AuthActions.login(this.state.user);
     console.log(this, '\n', this.history, '\n', this.context)
-    this.context.history.pushState(null, '/event');
   }
   _setUserState(event) {
     event.preventDefault();
@@ -43,11 +41,26 @@ class login extends BaseComponent {
     return this.setState({user: this.state.user});
   }
 
+  componentWillMount() {
+    AuthStore.addChangeListener(this._onAuthChange);
+  }
+
+  componentWillUnmount() {
+    AuthStore.removeChangeListener(this._onAuthChange);
+  }
+
   userFormIsValid() {
     var formIsValid = true;
     this.state.errors = {}; //clears previous errors
     this.setState({errors: this.state.errors});
     return formIsValid;
+  }
+
+  _onAuthChange() {
+    var loggedInUser = AuthStore.getLoggedInUser();
+    if (loggedInUser) {
+      this.context.history.pushState(null, '/event');
+    }
   }
 
   render() {

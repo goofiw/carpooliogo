@@ -18,7 +18,7 @@ var eventForm = React.createClass({
 
         <Input 
           name="url"
-          label="phone"
+          label="url"
           onChange={this.props.onChange}
           value={this.props.user.phone} 
           error={this.props.errors.phone} />

@@ -19,12 +19,12 @@ var AuthApi = {
     .success(function(data) {
       localStorage.setItem('jwt', data.jwt);
       console.log("successful post", data)
-      // if(data.jwt) {
-      //   Dispatcher.dispatch({
-      //     actionType: ActionTypes.USER_LOGGED_IN,
-      //     user: data.name
-      //   })
-      // }      
+      if(data.jwt) {
+        Dispatcher.dispatch({
+          actionType: ActionTypes.USER_LOGGED_IN,
+          user: data.name
+        })
+      }      
     })
   },
   signup: function(data) {
