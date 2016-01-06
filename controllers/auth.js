@@ -8,8 +8,6 @@ var jwt = require('jsonwebtoken');
 var phone = require('phone');
 
 var sms = require('../modules/sms');
-
-
 var users = wrap(db.get('users'));
 
 co(function * () {
