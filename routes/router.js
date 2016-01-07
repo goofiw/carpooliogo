@@ -2,6 +2,7 @@
 var members = require('../controllers/members.js');
 var auth = require('../controllers/auth.js');
 var router = require('koa-router')();
+var eventController = require('../controllers/event.js');
 
   router.get('/api/members', auth.isAuth, members.allmembers);
 
@@ -17,6 +18,7 @@ var router = require('koa-router')();
 
   router.get('/api/authcheck', auth.checkToken);
 
+  router.post('/api/createevent', eventController.createEvent);
 
   router.post('/api/fileupload', function *(next) {
     console.log(this);

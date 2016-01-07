@@ -47,6 +47,7 @@ var Header = React.createClass({
         <div className="container-fluid">
           <a href="/" className="navbar-brand">
           LOGO</a>
+          <Link to="/event">create event</Link>
         <ul className="nav navbar-nav">
           {loginState}
         </ul>

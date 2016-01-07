@@ -7,6 +7,7 @@ import toastr from 'toastr';
 import EventForm from './eventForm';
 import EventActions from '../../actions/eventActions';
 import EventStore from '../../stores/eventStore';
+import AuthStore from '../../stores/authStore';
 
 var createEvent = React.createClass({
 
@@ -21,12 +22,12 @@ var createEvent = React.createClass({
   componentWillMount: function() {// calls before the componentn mounted
   },
 
-  setUserState: function(event) {
+  setEventState: function(event) {
     this.setState({dirty: true});
     var field = event.target.name;
     var value = event.target.value;
-    this.state.user[field] = value;
-    return this.setState({user: this.state.user});
+    this.state.createEvent[field] = value;
+    return this.setState({createEvent: this.state.createEvent});
   },
 
   eventFormIsValid: function() {
@@ -44,12 +45,13 @@ var createEvent = React.createClass({
 
   saveEvent: function(event) {
     event.preventDefault();
-    if (!this.userFormIsValid()) {
+    if (!this.eventFormIsValid()) {
       return;
     }
+    this.state.createEvent.creator = AuthStore.getLoggedInUser();
     EventActions.createEvent(this.state.createEvent);
     this.setState({dirty: false});
-    toastr.success("user saved.");
+    toastr.success("event saved.");
     this.transitionTo('/');
   },
 
@@ -59,7 +61,7 @@ var createEvent = React.createClass({
       <div>
         <h1>Create Event</h1>
         <EventForm createEvent="ass"
-            onChange={this.setUserState} 
+            onChange={this.setEventState} 
             onSave={this.saveEvent}
             errors={this.state.errors} />
       </div>
