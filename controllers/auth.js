@@ -21,7 +21,7 @@ function generateCode() {
 function *signup(next) {
   var userData = this.request.body;
   console.log(this.request.body);
-  var user = yield users.find({phone: userData.phone})
+  var user = yield users.find({phone: userData.phone});
   console.log('user',user)
   if(user.length === 1) {
     if(bcrypt.compare(userData.password, user.hash)) {

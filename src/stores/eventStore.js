@@ -16,14 +16,12 @@ var EventStore = assign({}, EventEmitter.prototype, {
     this.removeListener('change', callback);
   },
   emitChange: function() {
-    console.log('user store changed');
     this.emit('change');
   },
   getLoggedInUser: function() {
     return _loggedInUser;
   },
   setLoggedInUser: function(name) {
-    console.log(name)
     _loggedInUser = name;
   }
 });

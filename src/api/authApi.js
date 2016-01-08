@@ -18,7 +18,6 @@ var AuthApi = {
     })
     .success(function(data) {
       localStorage.setItem('jwt', data.jwt);
-      console.log("successful post", data)
       if(data.jwt) {
         Dispatcher.dispatch({
           actionType: ActionTypes.USER_LOGGED_IN,
@@ -36,13 +35,11 @@ var AuthApi = {
     })
     .success(function(data) {
       localStorage.setItem('jwt', data.jwt);
-      console.log("successful post", data)
     })
   },
   checkToken: function() {
     var jwt = localStorage.getItem("jwt");
     if (typeof jwt !== "string") {
-      console.log("jwt", jwt, typeof jwt)
       return null;
     } else {
       $.ajax({
@@ -51,7 +48,6 @@ var AuthApi = {
         headers: {authorization: jwt}
       })
       .success(function(data) {
-        console.log("data from check token", data);
         if(data.user) {
           Dispatcher.dispatch({
             actionType: ActionTypes.USER_LOGGED_IN,

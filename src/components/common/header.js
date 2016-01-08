@@ -26,7 +26,6 @@ var Header = React.createClass({
   },
   render: function() {
     var loginState; 
-    console.log('state',this.state.user)
     if (typeof this.state.user === "string") {
       loginState = (
         <div>

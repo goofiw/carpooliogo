@@ -3,9 +3,9 @@
 import React from 'react';
 import Input from '../common/textInput';
 
-var eventForm = React.createClass({
+export default class extends React.Component {
 
-  render: function() {
+  render() {
     return (
       <form>
         <h1>User Signup</h1>
@@ -27,6 +27,5 @@ var eventForm = React.createClass({
       </form>
     );
   }
-});
+}
 
-module.exports = eventForm;
