@@ -6,6 +6,7 @@ import {render} from 'react-dom';
 import {createHistory} from 'history';
 
 import EventTable from './components/event/eventTable';
+import EventManager from './components/event/eventManager';
 
 var history = createHistory();
 
@@ -15,7 +16,7 @@ render((
       <IndexRoute component={EventTable} />
       <Route path="signup" component={require('./components/auth/signup')} />
       <Route path="login" component={require('./components/auth/login')} />
-      <Route path="event" component={require('./components/event/event')} />
+      <Route path="event" component={EventManager} />
     </Route>
   </Router>
 ), document.getElementById("app"));
