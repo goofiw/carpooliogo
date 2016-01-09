@@ -20,6 +20,8 @@ var eventController = require('../controllers/event.js');
 
   router.post('/api/createevent', eventController.createEvent);
 
+  router.get('/api/events', eventController.getEvents);
+
   router.post('/api/fileupload', function *(next) {
     console.log(this);
     yield this.body = {};
