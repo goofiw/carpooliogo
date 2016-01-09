@@ -10,5 +10,5 @@ module.exports = keyMirror({
   LOGIN_USER: null,
   LOGOUT_USER: null,
   INITIALIZE: null,
-  UPDATE_AUTHOR: null,
+  EVENTS_RECIEVED: null
 });

@@ -11,6 +11,7 @@ var eslint = require('gulp-eslint'); //lints js and jsx files
 var spawn = require('child_process').spawn;
 var babel = require('gulp-babel');
 var sourcemaps = require('gulp-sourcemaps');
+var notify = require('gulp-notify');
 var node;
 
 var config = {
@@ -60,7 +61,8 @@ gulp.task('js', function () {
   .transform(babelify, {presets: ["es2015", "stage-0", "react"]})
   .bundle()
   .pipe(source('bundle.js'))
-  .pipe(gulp.dest('dist'));
+  .pipe(gulp.dest('dist'))
+  .pipe(notify("js finished"));
 });
 
 // gulp.task('js', function(){

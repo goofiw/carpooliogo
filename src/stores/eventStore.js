@@ -6,7 +6,7 @@ import {EventEmitter} from 'events';
 import assign from 'object-assign';
 import _ from 'lodash';
 
-var _loggedInUser = {}; 
+var _events = [];
 
 var EventStore = assign({}, EventEmitter.prototype, {
   addChangeListener: function(callback) {
@@ -18,27 +18,19 @@ var EventStore = assign({}, EventEmitter.prototype, {
   emitChange: function() {
     this.emit('change');
   },
-  getLoggedInUser: function() {
-    return _loggedInUser;
+  getEvents: function() {
+    return _events;
   },
-  setLoggedInUser: function(name) {
-    _loggedInUser = name;
-  }
 });
 
 Dispatcher.register(function(action) {
   switch(action.actionType) {
-    case ActionTypes.USER_LOGGED_IN:
-      _loggedInUser = action.user;
-      break;
-    case ActionTypes.CREATE_AUTHOR:
-      _authors.push(action.author);
-      break;
-    case ActionTypes.LOGOUT_USER:
-      _loggedInUser = false;
+    case ActionTypes.EVENTS_RECIEVED:
+      _events = action.events;
       break;
   }
-  EventStore.emitChange();//call after changes are made so components know
+    EventStore.emitChange();//call after changes are made so components know
+    console.log(_events)
 });
 
 module.exports = EventStore;

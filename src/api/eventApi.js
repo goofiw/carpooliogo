@@ -8,7 +8,7 @@ import Dispatcher from '../dispatcher/appDispatcher';
 import ActionTypes from '../constants/actionTypes';
 
 
-var EventApi = {
+module.exports = {
   createEvent: function(data) {
     $.ajax({
       url: "/api/createevent",
@@ -25,7 +25,25 @@ var EventApi = {
         })
       }      
     })
+    .error(function(err) {
+      throw err;
+    })
   },
+
+  getEvents: function() {
+    $.ajax({
+      url: "/api/events",
+      method: "GET",
+    })
+    .success(function(data) {
+      Dispatcher.dispatch({
+        actionType: ActionTypes.EVENTS_RECIEVED,
+        events: data
+      });
+    })
+    .error(function(err) {
+      throw err;
+    })
+  }
 };
 
-module.exports = EventApi;

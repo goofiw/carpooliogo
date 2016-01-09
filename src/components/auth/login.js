@@ -20,6 +20,7 @@ class login extends BaseComponent {
       errors: {}
     }
     this._bind('_loginUser', '_setUserState', '_onAuthChange');
+    AuthStore.addChangeListener(this._onAuthChange);
   }
 
   _loginUser(event)  {
@@ -41,10 +42,6 @@ class login extends BaseComponent {
     return this.setState({user: this.state.user});
   }
 
-  componentWillMount() {
-    AuthStore.addChangeListener(this._onAuthChange);
-  }
-
   componentWillUnmount() {
     AuthStore.removeChangeListener(this._onAuthChange);
   }
@@ -59,7 +56,7 @@ class login extends BaseComponent {
   _onAuthChange() {
     var loggedInUser = AuthStore.getLoggedInUser();
     if (loggedInUser) {
-      this.context.history.pushState(null, '/event');
+      this.context.history.pushState(null, '/');
     }
   }
 
