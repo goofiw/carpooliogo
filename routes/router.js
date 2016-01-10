@@ -22,6 +22,8 @@ var eventController = require('../controllers/event.js');
 
   router.get('/api/events', eventController.getEvents);
 
+  router.get('/api/event/rides/:eventid', eventController.getRides);
+
   router.post('/api/fileupload', function *(next) {
     console.log(this);
     yield this.body = {};

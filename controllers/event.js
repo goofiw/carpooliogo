@@ -3,15 +3,20 @@ var monk = require('monk');
 var wrap = require('co-monk');
 var db = monk('localhost/testCarpool');
 var co = require('co');
+var events = wrap(db.get('events'));
+var rides = wrap(db.get('rides'));
 
 var sms = require('../modules/sms');
-var events = wrap(db.get('events'));
 
 var Event = require('../models/event.js');
 
 co(function * () {
   var events = yield events.find({});
 });
+
+co(function * () {
+  var rides = yield rides.find({});
+})
 
 function *createEvent(next) {
   var eventData = this.request.body;
@@ -34,7 +39,12 @@ function *getEvents(next) {
   this.body = yield events.find({});
 }
 
+function *getRides(eventId, next) {
+  this.body = yield rides.find({eventId: eventId});
+}
+
 module.exports = {
   createEvent,
-  getEvents
+  getEvents,
+  getRides
 }
