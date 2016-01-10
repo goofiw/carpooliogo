@@ -15,11 +15,10 @@ render((
   <Router history={history}>
     <Route path="/" component={require('./components/app')}>
       <IndexRoute component={EventTable} />
-      <Route path="signup" component={require('./components/auth/signup')} />
-      <Route path="login" component={require('./components/auth/login')} />
-      <Route path="event" component={EventManager}>
-        <Route path="/event/:eventid" component={Event} />
-      </Route>
+      <Route path="/signup" component={require('./components/auth/signup')} />
+      <Route path="/login" component={require('./components/auth/login')} />
+      <Route path="event" component={EventManager} />
+      <Route path="event/:eventid" component={Event} />
     </Route>
   </Router>
 ), document.getElementById("app"));

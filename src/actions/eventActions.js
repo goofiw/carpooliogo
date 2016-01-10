@@ -11,7 +11,12 @@ module.exports = {
 
   getEvents: function() {
     EventApi.getEvents();
+  },
+
+  getRides: function(eventId) {
+    EventApi.getRides(eventId);
   }
+
 };
 
 

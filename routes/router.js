@@ -25,15 +25,19 @@ var eventController = require('../controllers/event.js');
   router.post('/api/fileupload', function *(next) {
     console.log(this);
     yield this.body = {};
-  }),
+  })
 
 
   router.get('/api/awsurl', function *(next){
     yield this.body = {url: upload.getUrl()};
-  }),
+  })
+
+  router.get('/', function *(next) {
+    yield this.render('index'); 
+  })
 
   router.get('*', function *(next) {
     yield this.render('index'); 
-  }),
+  })
 
 module.exports = router.routes();

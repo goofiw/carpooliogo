@@ -44,6 +44,22 @@ module.exports = {
     .error(function(err) {
       throw err;
     })
+  },
+
+  getRides: function(eventId) {
+    $.ajax({
+      url: "/api/event/rides/" + eventId,
+      method: "GET",
+    })
+    .success(function(data) {
+      Dispatcher.dispatch({
+        actionType: ActionTypes.RIDES_RECIEVED,
+        rides: data
+      })
+    })
+    .error(function(err){
+      throw err;
+    })
   }
 };
 
