@@ -40,8 +40,11 @@ export default class extends BaseComponent {
         var fields = ['Driver', 'vehicle', 'departure info', 'plan', 'spots'];
 
         return (
-            <RideComponent fields={fields}
-              rides = {rides}/>
+            <div>
+              <Link to={`event/${this.state.eventId}/ride`}>Offer Ride</Link>
+              <RideComponent fields={fields}
+                rides={rides}/>
+            </div>
         )
     }
 }

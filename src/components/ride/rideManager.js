@@ -6,35 +6,35 @@ import toastr from 'toastr';
 import {History} from 'history';
 import BaseComponent from '../common/baseComponent';
 
-import EventForm from './eventForm';
+import RideForm from './rideForm';
 import EventActions from '../../actions/eventActions';
 import AuthStore from '../../stores/authStore';
 
-class EventManager extends BaseComponent {
+class RideManager extends BaseComponent {
 
   constructor(props) {
     super(props)
     this.state = {
-      createEvent: {name: '', url: ''},
+      ride: {creator: '', vehicle: '', event: this.props.params.eventid},
       errors: {},
       dirty: false,
     };
-    this._bind('setEventState', 'saveEvent', 'eventFormIsValid');
+    this._bind('setObjectState', 'saveObject', 'formIsValid');
   }
 
-  setEventState(event) {
+  setObjectState(event) {
     this.setState({dirty: true});
     var field = event.target.name;
     var value = event.target.value;
-    this.state.createEvent[field] = value;
-    return this.setState({createEvent: this.state.createEvent});
+    this.state.ride[field] = value;
+    return this.setState({ride: this.state.ride});
   }
 
-  eventFormIsValid() {
+  formIsValid() {
     var formIsValid = true;
     this.state.errors = {}; //clears previous errors
 
-    if (this.state.createEvent.name.length < 3) {
+    if (this.state.ride.name.length < 3) {
       formIsValid = false;
       this.state.errors.name = "Name must be at least 3 chars";
     }
@@ -43,34 +43,34 @@ class EventManager extends BaseComponent {
     return formIsValid;
   }
 
-  saveEvent(event) {
+  saveObject(event) {
     event.preventDefault();
-    if (!this.eventFormIsValid()) {
+    if (!this.formIsValid()) {
       return;
     }
-    this.state.createEvent.creator = AuthStore.getLoggedInUser();
-    EventActions.createEvent(this.state.createEvent);
+    this.state.ride.creator = AuthStore.getLoggedInUser();
+    EventActions.ride(this.state.ride);
     this.setState({dirty: false});
     toastr.success("event saved.");
-    this.context.history.pushState(null, '/');
+    this.context.history.pushState(null, '/event/' + this.state.ride.eventId);
   }
 
   render() {
-    console.log(this.state.createEvent)
+    console.log(this.state.ride)
     return (
       <div>
         <h1>Create Event</h1>
-        <EventForm createEvent="ass"
-            onChange={this.setEventState} 
-            onSave={this.saveEvent}
+        <RideForm ride="ass"
+            onChange={this.setObjectState} 
+            onSave={this.saveObject}
             errors={this.state.errors} />
       </div>
     );
   }
 }
 
-EventManager.contextTypes = {
+RideManager.contextTypes = {
     history: React.PropTypes.object
 };
 
-export default EventManager
+export default RideManager
