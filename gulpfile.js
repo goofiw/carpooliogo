@@ -8,10 +8,11 @@ var babelify = require("babelify");
 var source = require('vinyl-source-stream');
 var concat = require('gulp-concat');
 var eslint = require('gulp-eslint'); //lints js and jsx files
-var spawn = require('child_process').spawn;
+var child = require('child_process');
 var babel = require('gulp-babel');
 var sourcemaps = require('gulp-sourcemaps');
 var notify = require('gulp-notify');
+var sync = require('gulp-sync')(gulp).sync;
 var node;
 
 var config = {
@@ -26,6 +27,7 @@ var config = {
           './node_modules/toastr/toastr.scss'
           ],
     html: './src/*.html',
+    go: ['./server/*.go', './server/**/*.go'],
     dist: './dist',
   }
 }
@@ -91,21 +93,60 @@ gulp.task('lint', function() {
 gulp.task('watch', function() {
   gulp.watch(config.paths.html, ['html']);
   gulp.watch(config.paths.js, ['js', 'lint', 'server']);
+  gulp.watch(config.paths.go, sync(['server:build', 'server:spawn']));
 })
 
-gulp.task('server', function() {
-  if (node) node.kill()
-  node = spawn('node', ['index.js'], {stdio: 'inherit'})
-  node.on('close', function (code) {
-    if (code === 8) {
-      gulp.log('Error detected, waiting for changes...');
-    }
+gulp.task('server:build', function() {
+  var build = child.spawnSync('go', ['build']);
+  if (build.stderr.length) {
+    var lines = build.stderr.toString()
+      .split('\n').filter(function(line) {
+        return line.length
+      });
+    for (var l in lines)
+      util.log(util.colors.red(
+        'Error (go install): ' + lines[l]
+      ));
+    notify({
+      title: 'Error (go install)',
+      message: lines
+    });
+  }
+  return build;
+})
+
+
+var server = null;
+
+gulp.task('server:spawn', function() {
+    if (server)
+    server.kill();
+
+  /* Spawn application server */
+  server = child.spawn('./carpooliogo');
+
+  /* Trigger reload upon server start */
+  server.stdout.once('data', function() {
+    reload.reload('/');
+  });
+
+  /* Pretty print server log output */
+  server.stdout.on('data', function(data) {
+    var lines = data.toString().split('\n')
+    for (var l in lines)
+      if (lines[l].length)
+        util.log(lines[l]);
+  });
+
+  /* Print errors to stdout */
+  server.stderr.on('data', function(data) {
+    process.stdout.write(data.toString());
   });
 })
 
 // clean up if an error goes unhandled.
-process.on('exit', function() {
-    if (node) node.kill()
-})
+// process.on('exit', function() {
+//     if (server) server.kill()
+// })
 
-gulp.task('default', ['html', 'js', 'css', 'lint', 'watch', 'server']);
+gulp.task('default', sync([['html', 'js', 'css', 'lint', 'watch'], 'server:build', 'server:spawn']));
