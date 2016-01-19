@@ -9,6 +9,7 @@ import (
 func NewRouter() *mux.Router {
 
 	router := mux.NewRouter().StrictSlash(true)
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./dist")))
 	for _, route := range routes {
 		var handler http.Handler
 
