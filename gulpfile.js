@@ -79,7 +79,7 @@ gulp.task('js', function () {
 gulp.task('css', function() {
   gulp.src(config.paths.css)
     .pipe(concat('bundle.css'))
-    .pipe(gulp.dest(config.paths.dist + '/css'));
+    .pipe(gulp.dest(config.paths.dist));
 });
 
 gulp.task('lint', function() {

@@ -4,14 +4,33 @@ import (
 	// "encoding/json"
 	// "io"
 	// "io/ioutil"
+	"log"
 	"net/http"
+	"regexp"
 	// "strconv"
 
 	// "github.com/gorilla/mux"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	http.FileServer(http.Dir("./dist")).ServeHTTP(w, r)
+	log.Println(r.URL.Path)
+	// http.FileServer(http.Dir("./dist")).ServeHTTP(w, r)
+	re := regexp.MustCompile(".*/(.+\\..*)")
+	resourceMatches := re.FindStringSubmatch(r.URL.Path)
+	log.Println("prefix matches", resourceMatches)
+	var resource string
+	if len(resourceMatches) > 1 {
+		resource = resourceMatches[1]
+	}
+
+	var prefixPath string
+	if len(resource) > 0 {
+		prefixPath = r.URL.Path[:len(r.URL.Path)-len(resource)]
+	} else {
+		prefixPath = r.URL.Path
+	}
+	log.Println("strinpping", prefixPath)
+	http.StripPrefix(prefixPath, http.FileServer(http.Dir("./dist"))).ServeHTTP(w, r)
 }
 
 // func TodoIndex(w http.ResponseWriter, r *http.Request) {

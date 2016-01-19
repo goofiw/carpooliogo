@@ -1,15 +1,14 @@
 package server
 
 import (
-	"net/http"
-
 	"github.com/gorilla/mux"
+	"net/http"
 )
 
 func NewRouter() *mux.Router {
 
 	router := mux.NewRouter().StrictSlash(true)
-	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./dist")))
+
 	for _, route := range routes {
 		var handler http.Handler
 
@@ -23,6 +22,7 @@ func NewRouter() *mux.Router {
 			Handler(handler)
 
 	}
+	router.PathPrefix("/").HandlerFunc(Index)
 
 	return router
 }

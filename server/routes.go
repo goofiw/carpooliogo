@@ -12,10 +12,22 @@ type Route struct {
 type Routes []Route
 
 var routes = Routes{
+	// Route{
+	// 	"Index",
+	// 	"GET",
+	// 	"/",
+	// 	Index,
+	// },
 	Route{
-		"Index",
+		"GoogleLogin",
 		"GET",
-		"/",
-		Index,
+		"/auth/google/login",
+		GoogleLoginHandler,
+	},
+	Route{
+		"GoogleCallback",
+		"GET",
+		"/auth/google/callback",
+		GoogleCallbackHandler,
 	},
 }
